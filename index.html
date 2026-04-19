@@ -67,7 +67,7 @@ main{padding:14px 16px;max-width:480px;margin:0 auto}
 /* modal */
 .overlay{display:none;position:fixed;inset:0;background:rgba(74,60,46,.45);backdrop-filter:blur(4px);z-index:200;align-items:flex-end;justify-content:center}
 .overlay.open{display:flex}
-.modal{background:var(--card);border-radius:28px 28px 0 0;width:100%;max-width:480px;max-height:92vh;overflow-y:auto;padding:20px 20px 40px;animation:slideUp .28s ease}
+.modal{background:var(--card);border-radius:28px 28px 0 0;width:100%;max-width:480px;max-height:92dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:20px 20px 48px;animation:slideUp .28s ease}
 @keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
 .modal-handle{width:40px;height:4px;background:var(--light-tan);border-radius:4px;margin:0 auto 20px}
 .modal-title{font-family:'Noto Serif TC',serif;font-size:1.2rem;font-weight:700;color:var(--dark);margin-bottom:20px}
@@ -102,8 +102,9 @@ textarea{resize:vertical;min-height:80px}
 .btn-save{flex:2;padding:13px;border:none;border-radius:14px;background:var(--tan);color:#fff;font-family:inherit;font-size:.9rem;font-weight:500;cursor:pointer;transition:background .2s}
 .btn-save:hover{background:var(--dark)}
 /* detail */
-.detail-img{width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:var(--light-tan);display:flex;align-items:center;justify-content:center;font-size:3rem;margin-bottom:16px}
-.detail-img img{width:100%;height:100%;object-fit:cover}
+.detail-img{width:100%;border-radius:16px;overflow:hidden;background:var(--light-tan);display:flex;align-items:center;justify-content:center;font-size:3rem;margin-bottom:16px;min-height:80px}
+.detail-img img{width:100%;height:auto;display:block;max-height:65vh;object-fit:contain;background:var(--light-tan)}
+.detail-img.no-img{aspect-ratio:3/2}
 .detail-meta{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
 .badge{padding:4px 12px;border-radius:50px;font-size:.75rem;background:var(--light-tan);color:var(--mid)}
 .badge.cooked{background:#F0E8E0;color:var(--tan)}
@@ -115,7 +116,12 @@ textarea{resize:vertical;min-height:80px}
 .ing-item .amt{font-size:.78rem;color:var(--mid);margin-top:2px}
 .steps-block{background:var(--cream);border-radius:12px;padding:14px;margin-bottom:18px;line-height:1.9;font-size:.88rem;color:var(--dark);white-space:pre-wrap}
 .feedback-block{background:#FFF8F4;border:1px solid var(--light-tan);border-radius:12px;padding:14px;font-size:.88rem;color:var(--dark);line-height:1.8}
-.detail-actions{display:flex;gap:10px;margin-top:20px}
+.detail-close{display:flex;align-items:center;gap:8px;background:none;border:none;color:var(--mid);font-family:inherit;font-size:.88rem;cursor:pointer;padding:0;margin-bottom:16px}
+.detail-close:hover{color:var(--tan)}
+/* steps list with CSS counter */
+.steps-list{list-style:none;counter-reset:step;display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.steps-list li{counter-increment:step;display:flex;gap:10px;background:var(--cream);border-radius:12px;padding:12px 14px;font-size:.88rem;color:var(--dark);line-height:1.7}
+.steps-list li::before{content:counter(step);display:flex;align-items:flex-start;justify-content:center;flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--tan);color:#fff;font-size:.75rem;font-weight:700;margin-top:1px}
 .btn-edit{flex:2;padding:13px;border:none;border-radius:14px;background:var(--tan);color:#fff;font-family:inherit;font-size:.9rem;cursor:pointer;transition:background .2s}
 .btn-edit:hover{background:var(--dark)}
 .btn-delete{flex:1;padding:13px;border:1.5px solid #E8C8C0;border-radius:14px;background:transparent;font-family:inherit;font-size:.9rem;color:#C0776A;cursor:pointer}
@@ -379,12 +385,31 @@ function saveRecipe(){
 }
 function openDetail(id){
   const r=recipes.find(x=>x.id===id); if(!r)return;
-  const imgH=r.image?`<img src="${r.image}" onerror="this.style.display='none'" alt="">`: `<span>${catEmoji(r.category)}</span>`;
+  const hasImg=!!r.image;
+  const imgH=hasImg
+    ?`<img src="${r.image}" onerror="this.parentElement.classList.add('no-img');this.style.display='none'" alt="">`
+    :`<span>${catEmoji(r.category)}</span>`;
+  const imgClass=hasImg?'detail-img':'detail-img no-img';
   const ingH=r.ingredients.map(i=>`<div class="ing-item"><div class="name">${i.name}</div><div class="amt">${i.amount}</div></div>`).join('')||'<div style="color:var(--mid);font-size:.85rem">（未記錄）</div>';
   const seaH=r.seasonings.map(i=>`<div class="ing-item"><div class="name">${i.name}</div><div class="amt">${i.amount}</div></div>`).join('')||'<div style="color:var(--mid);font-size:.85rem">（未記錄）</div>';
   const srcBtn=r.sourceUrl?`<a href="${r.sourceUrl}" target="_blank" style="display:block;text-align:center;padding:10px;border:1.5px solid var(--light-tan);border-radius:12px;color:var(--mid);font-size:.85rem;text-decoration:none;margin-bottom:12px">🔗 查看來源食譜</a>`:'';
-  document.getElementById('detailContent').innerHTML=`<div class="modal-handle"></div><div class="detail-img">${imgH}</div><div class="detail-meta"><span class="badge">${r.category}</span><span class="badge">${r.type==='baby'?'🍼 寶寶食譜':'🍽 共食料理'}</span>${r.isCooked?'<span class="badge cooked">✅ 已完成</span>':''}</div><div class="detail-title">${r.title}</div>${srcBtn}${r.ingredients.length?`<div class="section-title">🥗 食材</div><div class="two-col-grid">${ingH}</div>`:''}${r.seasonings.length?`<div class="section-title">🧂 調味料</div><div class="two-col-grid">${seaH}</div>`:''}${r.steps?`<div class="section-title">📋 烹飪步驟</div><div class="steps-block">${formatSteps(r.steps)}</div>`:''}${r.note?`<div class="section-title">📝 備註</div><div style="font-size:.85rem;color:var(--mid);margin-bottom:18px">${r.note}</div>`:''}${r.feedback?`<div class="section-title">💬 試吃心得</div><div class="feedback-block">${r.feedback}</div>`:''}<div class="detail-actions"><button class="btn-edit" onclick="closeDetail();openAdd('${r.id}')">✏️ 編輯</button><button class="btn-delete" onclick="deleteRecipe('${r.id}')">刪除</button></div>`;
+  const stepsHtml=r.steps?`<div class="section-title">📋 烹飪步驟</div><ul class="steps-list">${r.steps.trim().split('\n').filter(l=>l.trim()).map(l=>`<li>${l.trim()}</li>`).join('')}</ul>`:'';
+  document.getElementById('detailContent').innerHTML=`
+    <div class="modal-handle"></div>
+    <button class="detail-close" onclick="closeDetail()">‹ 返回列表</button>
+    <div class="${imgClass}">${imgH}</div>
+    <div class="detail-meta"><span class="badge">${r.category}</span><span class="badge">${r.type==='baby'?'🍼 寶寶食譜':'🍽 共食料理'}</span>${r.isCooked?'<span class="badge cooked">✅ 已完成</span>':''}</div>
+    <div class="detail-title">${r.title}</div>
+    ${srcBtn}
+    ${r.ingredients.length?`<div class="section-title">🥗 食材</div><div class="two-col-grid">${ingH}</div>`:''}
+    ${r.seasonings.length?`<div class="section-title">🧂 調味料</div><div class="two-col-grid">${seaH}</div>`:''}
+    ${stepsHtml}
+    ${r.note?`<div class="section-title">📝 備註</div><div style="font-size:.85rem;color:var(--mid);margin-bottom:18px">${r.note}</div>`:''}
+    ${r.feedback?`<div class="section-title">💬 試吃心得</div><div class="feedback-block">${r.feedback}</div>`:''}
+    <div class="detail-actions"><button class="btn-edit" onclick="closeDetail();openAdd('${r.id}')">✏️ 編輯</button><button class="btn-delete" onclick="deleteRecipe('${r.id}')">刪除</button></div>
+    <div style="height:8px"></div>`;
   document.getElementById('detailOverlay').classList.add('open');
+  document.getElementById('detailContent').scrollTop=0;
 }
 function closeDetail(){ document.getElementById('detailOverlay').classList.remove('open'); }
 function deleteRecipe(id){ if(!confirm('確定要刪除這道食譜嗎？'))return; recipes=recipes.filter(r=>r.id!==id); save();render();closeDetail(); }
