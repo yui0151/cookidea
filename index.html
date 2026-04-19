@@ -10,6 +10,8 @@
 <meta name="apple-mobile-web-app-title" content="好煮意">
 <title>🍳 好煮意 Cook iDEA</title>
 <link rel="manifest" id="manifestLink">
+<link rel="apple-touch-icon" href="https://yui0151.github.io/cookidea/assets/logo.jpg">
+<link rel="icon" type="image/jpeg" href="https://yui0151.github.io/cookidea/assets/logo.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root{--cream:#FAF7F2;--tan:#B5927F;--dark:#4A3C2E;--mid:#8C7B6B;--light-tan:#E8D8CC;--card:#FFFCF8;--shadow:0 4px 20px rgba(74,60,46,.10);--radius:18px}
@@ -163,7 +165,7 @@ textarea{resize:vertical;min-height:80px}
 </div>
 <header>
   <div class="header-top">
-    <div class="logo">🍳 好煮意 <span>Cook iDEA</span></div>
+    <div class="logo"><img src="https://yui0151.github.io/cookidea/assets/logo.jpg" alt="好煮意" style="width:32px;height:32px;object-fit:contain;vertical-align:middle;margin-right:6px;mix-blend-mode:multiply;">好煮意 <span>Cook iDEA</span></div>
     <div class="header-actions">
       <button class="btn-icon" onclick="openBackup()" title="備份管理">💾</button>
       <button class="btn-add" onclick="openAdd()">＋ 新增</button>
@@ -460,7 +462,7 @@ function importBackup(e){
   reader.readAsText(file);
 }
 // PWA manifest
-const mBlob=new Blob([JSON.stringify({name:'好煮意 Cook iDEA',short_name:'好煮意',start_url:'./',display:'standalone',background_color:'#FAF7F2',theme_color:'#B5927F',icons:[{src:'https://fav.farm/🍳',sizes:'192x192',type:'image/png'},{src:'https://fav.farm/🍳',sizes:'512x512',type:'image/png'}]})],{type:'application/json'});
+const mBlob=new Blob([JSON.stringify({name:'好煮意 Cook iDEA',short_name:'好煮意',start_url:'./',display:'standalone',background_color:'#FAF7F2',theme_color:'#B5927F',icons:[{src:'https://yui0151.github.io/cookidea/assets/logo.jpg',sizes:'192x192',type:'image/jpeg'},{src:'https://yui0151.github.io/cookidea/assets/logo.jpg',sizes:'512x512',type:'image/jpeg'}]})],{type:'application/json'});
 document.getElementById('manifestLink').href=URL.createObjectURL(mBlob);
 // Service Worker
 if('serviceWorker' in navigator){
