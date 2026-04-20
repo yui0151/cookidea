@@ -75,7 +75,7 @@ main{padding:14px 16px;max-width:480px;margin:0 auto}
 .modal-title{font-family:'Noto Serif TC',serif;font-size:1.2rem;font-weight:700;color:var(--dark);margin-bottom:20px}
 .form-group{margin-bottom:16px}
 label{display:block;font-size:.78rem;color:var(--mid);margin-bottom:6px;font-weight:500}
-input[type=text],input[type=url],textarea,select{width:100%;padding:11px 14px;border:1.5px solid var(--light-tan);border-radius:12px;background:var(--cream);font-family:inherit;font-size:.9rem;color:var(--dark);outline:none;transition:border-color .2s}
+input[type=text],input[type=url],textarea,select{width:100%;padding:11px 14px;border:1.5px solid var(--light-tan);border-radius:12px;background:var(--cream);font-family:inherit;font-size:16px;color:var(--dark);outline:none;transition:border-color .2s}
 input:focus,textarea:focus,select:focus{border-color:var(--tan)}
 textarea{resize:vertical;min-height:80px}
 .seg{display:flex;gap:8px}
@@ -124,9 +124,9 @@ textarea{resize:vertical;min-height:80px}
 .steps-list{list-style:none;counter-reset:step;display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
 .steps-list li{counter-increment:step;display:flex;gap:10px;background:var(--cream);border-radius:12px;padding:12px 14px;font-size:.88rem;color:var(--dark);line-height:1.7}
 .steps-list li::before{content:counter(step);display:flex;align-items:flex-start;justify-content:center;flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--tan);color:#fff;font-size:.75rem;font-weight:700;margin-top:1px}
-.btn-edit{flex:1;padding:12px;border:none;border-radius:14px;background:var(--tan);color:#fff;font-family:inherit;font-size:.88rem;cursor:pointer;transition:background .2s}
+.btn-edit{flex:1;padding:13px;border:none;border-radius:14px;background:var(--tan);color:#fff;font-family:inherit;font-size:.9rem;cursor:pointer;transition:background .2s}
 .btn-edit:hover{background:var(--dark)}
-.btn-delete{flex:1;padding:12px;border:1.5px solid #E8C8C0;border-radius:14px;background:transparent;font-family:inherit;font-size:.88rem;color:#C0776A;cursor:pointer}
+.btn-delete{flex:1;padding:13px;border:1.5px solid #E8C8C0;border-radius:14px;background:transparent;font-family:inherit;font-size:.9rem;color:#C0776A;cursor:pointer}
 /* luck */
 .luck-card{text-align:center;padding:20px 0}
 .luck-emoji{font-size:3.5rem;margin-bottom:16px}
@@ -245,7 +245,7 @@ textarea{resize:vertical;min-height:80px}
       <button class="btn-add-row" onclick="addIngRow('seaList')">＋ 新增調味料</button>
     </div>
     <div class="form-group"><label>烹飪步驟</label><textarea id="fSteps" placeholder="一行一個步驟&#10;例：&#10;備料：雞肉切丁&#10;起鍋加油，炒香薑末"></textarea></div>
-    <div class="form-group"><label>備註</label><input type="text" id="fNote" placeholder="自由備註"></div>
+    <div class="form-group"><label>備註</label><textarea id="fNote" placeholder="自由備註" style="min-height:64px"></textarea></div>
     <div class="toggle-row">
       <span class="toggle-label">✅ 已完成烹飪</span>
       <label class="toggle"><input type="checkbox" id="fCooked"><span class="slider"></span></label>
@@ -410,7 +410,7 @@ function openDetail(id){
     ${stepsHtml}
     ${r.note?`<div class="section-title">📝 備註</div><div style="font-size:.85rem;color:var(--mid);margin-bottom:18px">${r.note}</div>`:''}
     ${r.feedback?`<div class="section-title">💬 試吃心得</div><div class="feedback-block">${r.feedback}</div>`:''}
-    <div class="detail-actions"><button class="btn-edit" onclick="closeDetail();openAdd('${r.id}')">✏️ 編輯</button><button class="btn-delete" onclick="deleteRecipe('${r.id}')">✕ 刪除</button></div>
+    <div class="detail-actions" style="gap:16px"><button class="btn-edit" onclick="closeDetail();openAdd('${r.id}')">編輯</button><button class="btn-delete" onclick="deleteRecipe('${r.id}')">✕ 刪除</button></div>
     <div style="height:8px"></div>`;
   document.getElementById('detailOverlay').classList.add('open');
   document.getElementById('detailContent').scrollTop=0;
