@@ -124,9 +124,9 @@ textarea{resize:vertical;min-height:80px}
 .steps-list{list-style:none;counter-reset:step;display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
 .steps-list li{counter-increment:step;display:flex;gap:10px;background:var(--cream);border-radius:12px;padding:12px 14px;font-size:.88rem;color:var(--dark);line-height:1.7}
 .steps-list li::before{content:counter(step);display:flex;align-items:flex-start;justify-content:center;flex-shrink:0;width:24px;height:24px;border-radius:50%;background:var(--tan);color:#fff;font-size:.75rem;font-weight:700;margin-top:1px}
-.btn-edit{flex:2;padding:13px;border:none;border-radius:14px;background:var(--tan);color:#fff;font-family:inherit;font-size:.9rem;cursor:pointer;transition:background .2s}
+.btn-edit{flex:1;padding:12px;border:none;border-radius:14px;background:var(--tan);color:#fff;font-family:inherit;font-size:.88rem;cursor:pointer;transition:background .2s}
 .btn-edit:hover{background:var(--dark)}
-.btn-delete{flex:1;padding:13px;border:1.5px solid #E8C8C0;border-radius:14px;background:transparent;font-family:inherit;font-size:.9rem;color:#C0776A;cursor:pointer}
+.btn-delete{flex:1;padding:12px;border:1.5px solid #E8C8C0;border-radius:14px;background:transparent;font-family:inherit;font-size:.88rem;color:#C0776A;cursor:pointer}
 /* luck */
 .luck-card{text-align:center;padding:20px 0}
 .luck-emoji{font-size:3.5rem;margin-bottom:16px}
@@ -227,6 +227,7 @@ textarea{resize:vertical;min-height:80px}
       </select>
     </div>
     <div class="form-group"><label>食譜名稱 *</label><input type="text" id="fTitle" placeholder="例：南瓜雞肉粥"></div>
+    <div class="form-group"><label>份量（選填）</label><input type="text" id="fServing" placeholder="例：2人份、4碗"></div>
     <div class="form-group">
       <label>圖片網址</label>
       <input type="url" id="fImage" placeholder="貼上圖片網址" oninput="previewImg()">
@@ -333,7 +334,7 @@ function render(){
     }).join('');
   } else {
     c.className='recipe-list';
-    c.innerHTML=list.map(r=>`<div class="recipe-row" onclick="openDetail('${r.id}')"><div class="row-emoji">${catEmoji(r.category)}</div><div class="row-body"><div class="row-title">${r.title}</div><div class="row-meta">${r.category} · ${r.type==='baby'?'寶寶食譜':'共食料理'}</div>${r.isCooked?'<div class="row-cooked">✅ 已完成</div>':''}</div><div class="row-arrow">›</div></div>`).join('');
+    c.innerHTML=list.map(r=>`<div class="recipe-row" onclick="openDetail('${r.id}')"><div class="row-emoji">${catEmoji(r.category)}</div><div class="row-body"><div class="row-title">${r.title}</div><div class="row-meta">${r.category.replace(/^\S+\s/,'')} · ${r.type==='baby'?'寶寶食譜':'共食料理'}${r.serving?' · '+r.serving:''}</div>${r.isCooked?'<div class="row-cooked">✅ 已完成</div>':''}</div><div class="row-arrow">›</div></div>`).join('');
   }
 }
 function setView(v){ viewMode=v; localStorage.setItem('cookidea_view',v); render(); }
@@ -355,6 +356,7 @@ function openAdd(id){
   document.querySelectorAll('#formTypeSeg .seg-btn').forEach(b=>b.classList.toggle('active',b.dataset.v===formType));
   document.getElementById('fCat').value=r?.category||'🍚 主食';
   document.getElementById('fTitle').value=r?.title||'';
+  document.getElementById('fServing').value=r?.serving||'';
   document.getElementById('fImage').value=r?.image||'';
   document.getElementById('fSource').value=r?.sourceUrl||'';
   document.getElementById('fSteps').value=r?.steps||'';
@@ -381,7 +383,7 @@ function getIngRows(listId){
 }
 function saveRecipe(){
   const title=document.getElementById('fTitle').value.trim(); if(!title){alert('請填寫食譜名稱');return;}
-  const r={id:editingId||uid(),type:formType,category:document.getElementById('fCat').value,title,image:document.getElementById('fImage').value.trim(),sourceUrl:document.getElementById('fSource').value.trim(),ingredients:getIngRows('ingList'),seasonings:getIngRows('seaList'),steps:document.getElementById('fSteps').value.trim(),note:document.getElementById('fNote').value.trim(),isCooked:document.getElementById('fCooked').checked,feedback:document.getElementById('fFeedback').value.trim(),updatedAt:Date.now()};
+  const r={id:editingId||uid(),type:formType,category:document.getElementById('fCat').value,title,serving:document.getElementById('fServing').value.trim(),image:document.getElementById('fImage').value.trim(),sourceUrl:document.getElementById('fSource').value.trim(),ingredients:getIngRows('ingList'),seasonings:getIngRows('seaList'),steps:document.getElementById('fSteps').value.trim(),note:document.getElementById('fNote').value.trim(),isCooked:document.getElementById('fCooked').checked,feedback:document.getElementById('fFeedback').value.trim(),updatedAt:Date.now()};
   if(editingId){recipes[recipes.findIndex(x=>x.id===editingId)]=r;}else{recipes.unshift(r);}
   save();render();closeAdd(); if(editingId)openDetail(editingId);
 }
@@ -400,7 +402,7 @@ function openDetail(id){
     <div class="modal-handle"></div>
     <button class="detail-close" onclick="closeDetail()">‹ 返回列表</button>
     <div class="${imgClass}">${imgH}</div>
-    <div class="detail-meta"><span class="badge">${r.category}</span><span class="badge">${r.type==='baby'?'🍼 寶寶食譜':'🍽 共食料理'}</span>${r.isCooked?'<span class="badge cooked">✅ 已完成</span>':''}</div>
+    <div class="detail-meta"><span class="badge">${r.category}</span><span class="badge">${r.type==='baby'?'🍼 寶寶食譜':'🍽 共食料理'}</span>${r.serving?`<span class="badge">🍽 ${r.serving}</span>`:''}${r.isCooked?'<span class="badge cooked">✅ 已完成</span>':''}</div>
     <div class="detail-title">${r.title}</div>
     ${srcBtn}
     ${r.ingredients.length?`<div class="section-title">🥗 食材</div><div class="two-col-grid">${ingH}</div>`:''}
@@ -408,7 +410,7 @@ function openDetail(id){
     ${stepsHtml}
     ${r.note?`<div class="section-title">📝 備註</div><div style="font-size:.85rem;color:var(--mid);margin-bottom:18px">${r.note}</div>`:''}
     ${r.feedback?`<div class="section-title">💬 試吃心得</div><div class="feedback-block">${r.feedback}</div>`:''}
-    <div class="detail-actions"><button class="btn-edit" onclick="closeDetail();openAdd('${r.id}')">✏️ 編輯</button><button class="btn-delete" onclick="deleteRecipe('${r.id}')">刪除</button></div>
+    <div class="detail-actions"><button class="btn-edit" onclick="closeDetail();openAdd('${r.id}')">✏️ 編輯</button><button class="btn-delete" onclick="deleteRecipe('${r.id}')">✕ 刪除</button></div>
     <div style="height:8px"></div>`;
   document.getElementById('detailOverlay').classList.add('open');
   document.getElementById('detailContent').scrollTop=0;
